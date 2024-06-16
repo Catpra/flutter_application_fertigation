@@ -15,8 +15,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
-        ChangeNotifierProvider(
-            create: (_) => BluetoothProvider()), // Add this line
+        ChangeNotifierProvider(create: (_) => BluetoothProvider()),
       ],
       child: MaterialApp(
         title: 'Scheduler',
