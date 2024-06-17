@@ -7,10 +7,12 @@ class BluetoothProvider with ChangeNotifier {
   BluetoothDevice? _connectedDevice;
   List<BluetoothService> _services = [];
   List<BluetoothDevice> _devices = [];
+  bool _isScanning = false;
 
   BluetoothDevice? get connectedDevice => _connectedDevice;
   List<BluetoothService> get services => _services;
   List<BluetoothDevice> get devices => _devices;
+  bool get isScanning => _isScanning; // Ensure getter is defined
 
   BluetoothProvider() {
     _flutterBlue.scanResults.listen((results) {
@@ -30,11 +32,19 @@ class BluetoothProvider with ChangeNotifier {
 
   Future<void> startScan() async {
     await requestPermissions();
-    _flutterBlue.startScan(timeout: Duration(seconds: 4));
+    _isScanning = true;
+    _devices.clear();
+    notifyListeners();
+    _flutterBlue.startScan(timeout: Duration(seconds: 4)).then((_) {
+      _isScanning = false;
+      notifyListeners();
+    });
   }
 
   void stopScan() {
     _flutterBlue.stopScan();
+    _isScanning = false;
+    notifyListeners();
   }
 
   void connect(BluetoothDevice device) async {

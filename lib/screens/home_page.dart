@@ -17,23 +17,33 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.bluetooth),
             onPressed: () async {
-              bluetoothProvider.startScan();
+              await bluetoothProvider.startScan();
               await showModalBottomSheet(
                 context: context,
                 builder: (context) {
                   return Consumer<BluetoothProvider>(
                     builder: (context, bluetoothProvider, child) {
-                      return ListView(
-                        children: bluetoothProvider.devices.map((device) {
-                          return ListTile(
-                            title: Text(device.name),
-                            onTap: () {
-                              bluetoothProvider.connect(device);
-                              Navigator.pop(context);
-                            },
-                          );
-                        }).toList(),
-                      );
+                      if (bluetoothProvider.isScanning) {
+                        // Correctly reference the getter
+                        return Center(child: CircularProgressIndicator());
+                      } else if (bluetoothProvider.devices.isEmpty) {
+                        return Center(child: Text('No devices found'));
+                      } else {
+                        return ListView(
+                          children: bluetoothProvider.devices.map((device) {
+                            return ListTile(
+                              title: Text(device.name.isEmpty
+                                  ? 'Unknown device'
+                                  : device.name),
+                              subtitle: Text(device.id.toString()),
+                              onTap: () {
+                                bluetoothProvider.connect(device);
+                                Navigator.pop(context);
+                              },
+                            );
+                          }).toList(),
+                        );
+                      }
                     },
                   );
                 },
