@@ -24,7 +24,6 @@ class HomePage extends StatelessWidget {
                   return Consumer<BluetoothProvider>(
                     builder: (context, bluetoothProvider, child) {
                       if (bluetoothProvider.isScanning) {
-                        // Correctly reference the getter
                         return Center(child: CircularProgressIndicator());
                       } else if (bluetoothProvider.devices.isEmpty) {
                         return Center(child: Text('No devices found'));
