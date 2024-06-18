@@ -12,33 +12,50 @@ class BluetoothProvider with ChangeNotifier {
   BluetoothDevice? get connectedDevice => _connectedDevice;
   List<BluetoothService> get services => _services;
   List<BluetoothDevice> get devices => _devices;
-  bool get isScanning => _isScanning; // Ensure getter is defined
+  bool get isScanning => _isScanning;
 
   BluetoothProvider() {
     _flutterBlue.scanResults.listen((results) {
       _devices = results.map((r) => r.device).toList();
+      print("Devices found: ${_devices.length}");
       notifyListeners();
     });
   }
 
   Future<void> requestPermissions() async {
-    await [
+    Map<Permission, PermissionStatus> statuses = await [
       Permission.bluetooth,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
       Permission.location,
     ].request();
+
+    bool allGranted = statuses.values.every((status) => status.isGranted);
+    if (!allGranted) {
+      throw Exception("Permissions not granted");
+    }
   }
 
   Future<void> startScan() async {
-    await requestPermissions();
-    _isScanning = true;
-    _devices.clear();
-    notifyListeners();
-    _flutterBlue.startScan(timeout: Duration(seconds: 4)).then((_) {
-      _isScanning = false;
+    try {
+      await requestPermissions();
+      if (_isScanning) return;
+      _isScanning = true;
+      _devices.clear();
       notifyListeners();
-    });
+      print("Starting scan...");
+      _flutterBlue.startScan(timeout: Duration(seconds: 4)).then((_) {
+        _isScanning = false;
+        print("Scan completed.");
+        notifyListeners();
+      }).catchError((e) {
+        print("Error starting scan: $e");
+        _isScanning = false;
+        notifyListeners();
+      });
+    } catch (e) {
+      print("Error requesting permissions: $e");
+    }
   }
 
   void stopScan() {
@@ -47,17 +64,27 @@ class BluetoothProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void connect(BluetoothDevice device) async {
-    await device.connect();
-    _connectedDevice = device;
-    _services = await device.discoverServices();
-    notifyListeners();
+  Future<void> connect(BluetoothDevice device) async {
+    try {
+      await device.connect();
+      _connectedDevice = device;
+      _services = await device.discoverServices();
+      print("Connected to ${device.name}");
+      notifyListeners();
+    } catch (e) {
+      print("Error connecting to device: $e");
+      _connectedDevice = null;
+      _services = [];
+      notifyListeners();
+    }
   }
 
-  void disconnect() async {
-    await _connectedDevice?.disconnect();
-    _connectedDevice = null;
-    _services = [];
-    notifyListeners();
+  Future<void> disconnect() async {
+    if (_connectedDevice != null) {
+      await _connectedDevice?.disconnect();
+      _connectedDevice = null;
+      _services = [];
+      notifyListeners();
+    }
   }
 }

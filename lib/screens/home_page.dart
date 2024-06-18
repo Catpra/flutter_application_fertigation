@@ -35,9 +35,22 @@ class HomePage extends StatelessWidget {
                                   ? 'Unknown device'
                                   : device.name),
                               subtitle: Text(device.id.toString()),
-                              onTap: () {
-                                bluetoothProvider.connect(device);
+                              onTap: () async {
+                                await bluetoothProvider.connect(device);
                                 Navigator.pop(context);
+                                if (bluetoothProvider.connectedDevice != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Connected to ${device.name}')),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed to connect to ${device.name}')),
+                                  );
+                                }
                               },
                             );
                           }).toList(),
@@ -52,31 +65,45 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: 3, // There are 3 areas
-        itemBuilder: (context, index) {
-          int area = index + 1;
-          List schedules =
-              scheduleProvider.schedules.where((s) => s.area == area).toList();
+      body: Column(
+        children: [
+          if (bluetoothProvider.connectedDevice != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  'Connected to ${bluetoothProvider.connectedDevice!.name}',
+                  style: TextStyle(fontSize: 20)),
+            ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 3, // There are 3 areas
+              itemBuilder: (context, index) {
+                int area = index + 1;
+                List schedules = scheduleProvider.schedules
+                    .where((s) => s.area == area)
+                    .toList();
 
-          return Card(
-            margin: EdgeInsets.all(12.0),
-            color: Theme.of(context).cardColor.withOpacity(0.7),
-            child: ExpansionTile(
-              backgroundColor: Theme.of(context).cardColor,
-              title: Text('Area $area',
-                  style: Theme.of(context).textTheme.headlineSmall),
-              children: schedules.map((schedule) {
-                return ListTile(
-                  title: Text(
-                    'Time: ${schedule.hour}:${schedule.minute}, Duration: ${schedule.duration} min',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                return Card(
+                  margin: EdgeInsets.all(12.0),
+                  color: Theme.of(context).cardColor.withOpacity(0.7),
+                  child: ExpansionTile(
+                    backgroundColor: Theme.of(context).cardColor,
+                    title: Text('Area $area',
+                        style: Theme.of(context).textTheme.headlineSmall),
+                    children: schedules.map((schedule) {
+                      return ListTile(
+                        title: Text(
+                          'Time: ${schedule.hour}:${schedule.minute}, Duration: ${schedule.duration} min',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 );
-              }).toList(),
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
