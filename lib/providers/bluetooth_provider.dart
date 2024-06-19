@@ -87,4 +87,22 @@ class BluetoothProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> sendData(String data) async {
+    if (_connectedDevice == null) return;
+
+    for (BluetoothService service in _services) {
+      for (BluetoothCharacteristic characteristic in service.characteristics) {
+        if (characteristic.properties.write) {
+          try {
+            await characteristic.write(data.codeUnits);
+            print("Data sent: $data");
+            return;
+          } catch (e) {
+            print("Error sending data: $e");
+          }
+        }
+      }
+    }
+  }
 }

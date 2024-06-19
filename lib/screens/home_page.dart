@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/schedule_provider.dart';
 import '../providers/bluetooth_provider.dart';
+//import '../models/schedule.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheduleProvider = Provider.of<ScheduleProvider>(context);
     final bluetoothProvider = Provider.of<BluetoothProvider>(context);
+
+    void sendSchedules() {
+      final schedules = scheduleProvider.schedules;
+      final data = schedules.map((s) {
+        return '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')},'
+            '${(s.duration ~/ 3)}';
+      }).join(';');
+      bluetoothProvider.sendData(data);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -44,6 +54,7 @@ class HomePage extends StatelessWidget {
                                         content: Text(
                                             'Connected to ${device.name}')),
                                   );
+                                  sendSchedules();
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -98,15 +109,15 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Duration Area 1: ${area1Duration ~/ 60} mins',
+                          'Duration Area 1: ${area1Duration ~/ 60} minutes',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 2: ${area2Duration ~/ 60} mins',
+                          'Duration Area 2: ${area2Duration ~/ 60} minutes',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 3: ${area3Duration ~/ 60} mins',
+                          'Duration Area 3: ${area3Duration ~/ 60} minutes',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
