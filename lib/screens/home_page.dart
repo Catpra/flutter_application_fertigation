@@ -86,18 +86,25 @@ class HomePage extends StatelessWidget {
                 return Card(
                   margin: EdgeInsets.all(12.0),
                   color: Theme.of(context).cardColor.withOpacity(0.7),
-                  child: ExpansionTile(
-                    backgroundColor: Theme.of(context).cardColor,
-                    title: Text('Area $area',
-                        style: Theme.of(context).textTheme.headlineSmall),
-                    children: schedules.map((schedule) {
-                      return ListTile(
-                        title: Text(
-                          'Time: ${schedule.hour}:${schedule.minute}, Duration: ${schedule.duration} min',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Area $area',
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                      );
-                    }).toList(),
+                        ...schedules.map((schedule) {
+                          return ListTile(
+                            title: Text(
+                              'Time: ${schedule.hour}:${schedule.minute}, Duration: ${schedule.duration} min',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
                   ),
                 );
               },
