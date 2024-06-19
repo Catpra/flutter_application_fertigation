@@ -80,27 +80,33 @@ class HomePage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final schedule = scheduleProvider.schedules[index];
 
+                // Calculate individual area durations
+                final area1Duration = schedule.duration ~/ 3;
+                final area2Duration = schedule.duration ~/ 3;
+                final area3Duration =
+                    schedule.duration - area1Duration - area2Duration;
+
                 return Card(
                   margin: EdgeInsets.all(12.0),
                   color: Theme.of(context).cardColor.withOpacity(0.7),
                   child: ListTile(
                     title: Text(
-                      'Watering Schedule: ${schedule.hour.toString().padLeft(2, '0')}:${schedule.minute.toString().padLeft(2, '0')}',
+                      'Time: ${schedule.hour.toString().padLeft(2, '0')}:${schedule.minute.toString().padLeft(2, '0')}',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Duration Area 1: ${schedule.duration ~/ 3} seconds',
+                          'Duration Area 1: ${area1Duration ~/ 60} mins',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 2: ${schedule.duration ~/ 3} seconds',
+                          'Duration Area 2: ${area2Duration ~/ 60} mins',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 3: ${schedule.duration ~/ 3} seconds',
+                          'Duration Area 3: ${area3Duration ~/ 60} mins',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],

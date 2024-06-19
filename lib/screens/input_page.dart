@@ -12,7 +12,9 @@ class _InputPageState extends State<InputPage> {
   final _formKey = GlobalKey<FormState>();
   int _hour = 0;
   int _minute = 0;
-  int _duration = 0; // duration for all three areas in seconds
+  int _durationArea1 = 0;
+  int _durationArea2 = 0;
+  int _durationArea3 = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -68,15 +70,45 @@ class _InputPageState extends State<InputPage> {
                 style: TextStyle(fontSize: 20),
               ),
               TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Duration for all areas (seconds)'),
+                decoration:
+                    InputDecoration(labelText: 'Duration for Area 1 (minutes)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
-                  _duration = int.parse(value!);
+                  _durationArea1 = int.parse(value!);
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty || int.parse(value) <= 0) {
-                    return 'Please enter a valid duration (greater than 0)';
+                    return 'Please enter a valid duration for Area 1 (greater than 0)';
+                  }
+                  return null;
+                },
+                style: TextStyle(fontSize: 20),
+              ),
+              TextFormField(
+                decoration:
+                    InputDecoration(labelText: 'Duration for Area 2 (minutes)'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) {
+                  _durationArea2 = int.parse(value!);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty || int.parse(value) <= 0) {
+                    return 'Please enter a valid duration for Area 2 (greater than 0)';
+                  }
+                  return null;
+                },
+                style: TextStyle(fontSize: 20),
+              ),
+              TextFormField(
+                decoration:
+                    InputDecoration(labelText: 'Duration for Area 3 (minutes)'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) {
+                  _durationArea3 = int.parse(value!);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty || int.parse(value) <= 0) {
+                    return 'Please enter a valid duration for Area 3 (greater than 0)';
                   }
                   return null;
                 },
@@ -87,10 +119,16 @@ class _InputPageState extends State<InputPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+                    final totalDuration = _durationArea1 * 60 +
+                        _durationArea2 * 60 +
+                        _durationArea3 * 60;
                     Provider.of<ScheduleProvider>(context, listen: false)
                         .addSchedule(
                       Schedule(
-                          hour: _hour, minute: _minute, duration: _duration),
+                        hour: _hour,
+                        minute: _minute,
+                        duration: totalDuration,
+                      ),
                     );
                     Navigator.pop(context);
                   }
