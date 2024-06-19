@@ -1,13 +1,13 @@
 class Schedule {
-  int area;
   int hour;
   int minute;
-  int duration;
+  int duration; // duration in seconds
 
-  Schedule({
-    required this.area,
-    required this.hour,
-    required this.minute,
-    required this.duration,
-  });
+  Schedule({required this.hour, required this.minute, required this.duration});
+
+  int get totalMinutes => hour * 60 + minute;
+
+  int compareTo(Schedule other) {
+    return totalMinutes.compareTo(other.totalMinutes);
+  }
 }

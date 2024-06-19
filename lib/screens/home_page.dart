@@ -76,33 +76,33 @@ class HomePage extends StatelessWidget {
             ),
           Expanded(
             child: ListView.builder(
-              itemCount: 3, // There are 3 areas
+              itemCount: scheduleProvider.schedules.length,
               itemBuilder: (context, index) {
-                int area = index + 1;
-                List schedules = scheduleProvider.schedules
-                    .where((s) => s.area == area)
-                    .toList();
+                final schedule = scheduleProvider.schedules[index];
 
                 return Card(
                   margin: EdgeInsets.all(12.0),
                   color: Theme.of(context).cardColor.withOpacity(0.7),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                  child: ListTile(
+                    title: Text(
+                      'Watering Schedule: ${schedule.hour.toString().padLeft(2, '0')}:${schedule.minute.toString().padLeft(2, '0')}',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Area $area',
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          'Duration Area 1: ${schedule.duration ~/ 3} seconds',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        ...schedules.map((schedule) {
-                          return ListTile(
-                            title: Text(
-                              'Time: ${schedule.hour}:${schedule.minute}, Duration: ${schedule.duration} min',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          );
-                        }).toList(),
+                        Text(
+                          'Duration Area 2: ${schedule.duration ~/ 3} seconds',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          'Duration Area 3: ${schedule.duration ~/ 3} seconds',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ],
                     ),
                   ),

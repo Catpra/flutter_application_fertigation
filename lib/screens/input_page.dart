@@ -10,10 +10,9 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   final _formKey = GlobalKey<FormState>();
-  int _area = 1;
   int _hour = 0;
   int _minute = 0;
-  int _duration = 0;
+  int _duration = 0; // duration for all three areas in seconds
 
   @override
   Widget build(BuildContext context) {
@@ -28,29 +27,8 @@ class _InputPageState extends State<InputPage> {
           key: _formKey,
           child: Column(
             children: [
-              DropdownButtonFormField(
-                decoration: InputDecoration(labelText: 'Area'),
-                value: _area,
-                items: [1, 2, 3].map((area) {
-                  return DropdownMenuItem(
-                    value: area,
-                    child: Text('Area $area', style: TextStyle(fontSize: 20)),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _area = value as int;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select an area';
-                  }
-                  return null;
-                },
-              ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Hour'),
+                decoration: InputDecoration(labelText: 'Hour (hh)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _hour = int.parse(value!);
@@ -60,14 +38,17 @@ class _InputPageState extends State<InputPage> {
                       value.isEmpty ||
                       int.parse(value) < 0 ||
                       int.parse(value) > 23) {
-                    return 'Please enter a valid hour (0-23)';
+                    return 'Please enter a valid hour (00-23)';
+                  }
+                  if (value.length != 2) {
+                    return 'Please enter hour in "hh" format';
                   }
                   return null;
                 },
                 style: TextStyle(fontSize: 20),
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Minute'),
+                decoration: InputDecoration(labelText: 'Minute (mm)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _minute = int.parse(value!);
@@ -77,14 +58,18 @@ class _InputPageState extends State<InputPage> {
                       value.isEmpty ||
                       int.parse(value) < 0 ||
                       int.parse(value) > 59) {
-                    return 'Please enter a valid minute (0-59)';
+                    return 'Please enter a valid minute (00-59)';
+                  }
+                  if (value.length != 2) {
+                    return 'Please enter minute in "mm" format';
                   }
                   return null;
                 },
                 style: TextStyle(fontSize: 20),
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Duration (minutes)'),
+                decoration: InputDecoration(
+                    labelText: 'Duration for all areas (seconds)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _duration = int.parse(value!);
@@ -105,10 +90,7 @@ class _InputPageState extends State<InputPage> {
                     Provider.of<ScheduleProvider>(context, listen: false)
                         .addSchedule(
                       Schedule(
-                          area: _area,
-                          hour: _hour,
-                          minute: _minute,
-                          duration: _duration),
+                          hour: _hour, minute: _minute, duration: _duration),
                     );
                     Navigator.pop(context);
                   }
