@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/schedule_provider.dart';
 import '../providers/bluetooth_provider.dart';
-//import '../models/schedule.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -109,15 +108,15 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Duration Area 1: ${area1Duration ~/ 60} minutes',
+                          'Duration Area 1: $area1Duration seconds',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 2: ${area2Duration ~/ 60} minutes',
+                          'Duration Area 2: $area2Duration seconds',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          'Duration Area 3: ${area3Duration ~/ 60} minutes',
+                          'Duration Area 3: $area3Duration seconds',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],

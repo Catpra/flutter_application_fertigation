@@ -71,7 +71,7 @@ class _InputPageState extends State<InputPage> {
               ),
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Duration for Area 1 (minutes)'),
+                    InputDecoration(labelText: 'Duration for Area 1 (seconds)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _durationArea1 = int.parse(value!);
@@ -86,7 +86,7 @@ class _InputPageState extends State<InputPage> {
               ),
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Duration for Area 2 (minutes)'),
+                    InputDecoration(labelText: 'Duration for Area 2 (seconds)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _durationArea2 = int.parse(value!);
@@ -101,7 +101,7 @@ class _InputPageState extends State<InputPage> {
               ),
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Duration for Area 3 (minutes)'),
+                    InputDecoration(labelText: 'Duration for Area 3 (seconds)'),
                 keyboardType: TextInputType.number,
                 onSaved: (value) {
                   _durationArea3 = int.parse(value!);
@@ -119,9 +119,8 @@ class _InputPageState extends State<InputPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    final totalDuration = _durationArea1 * 60 +
-                        _durationArea2 * 60 +
-                        _durationArea3 * 60;
+                    final totalDuration =
+                        _durationArea1 + _durationArea2 + _durationArea3;
                     Provider.of<ScheduleProvider>(context, listen: false)
                         .addSchedule(
                       Schedule(
