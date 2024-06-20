@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/schedule_provider.dart';
 import '../providers/bluetooth_provider.dart';
+import '../models/schedule.dart';
 
 class HomePage extends StatelessWidget {
   @override
