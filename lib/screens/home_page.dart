@@ -74,6 +74,16 @@ class HomePage extends StatelessWidget {
               bluetoothProvider.stopScan();
             },
           ),
+          if (bluetoothProvider.connectedDevice != null)
+            IconButton(
+              icon: Icon(Icons.bluetooth_disabled),
+              onPressed: () async {
+                await bluetoothProvider.disconnect();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Disconnected from device')),
+                );
+              },
+            ),
         ],
       ),
       body: Column(

@@ -84,6 +84,7 @@ class BluetoothProvider with ChangeNotifier {
       await _connectedDevice?.disconnect();
       _connectedDevice = null;
       _services = [];
+      print("Disconnected from device");
       notifyListeners();
     }
   }
@@ -93,9 +94,11 @@ class BluetoothProvider with ChangeNotifier {
 
     for (BluetoothService service in _services) {
       for (BluetoothCharacteristic characteristic in service.characteristics) {
-        if (characteristic.properties.write) {
+        if (characteristic.uuid.toString() ==
+                "beb5483e-36e1-4688-b7f5-ea07361b26a8" &&
+            characteristic.properties.write) {
           try {
-            await characteristic.write(data.codeUnits);
+            await characteristic.write(data.codeUnits, withoutResponse: true);
             print("Data sent: $data");
             return;
           } catch (e) {
