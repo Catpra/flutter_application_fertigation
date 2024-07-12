@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
       final schedules = scheduleProvider.schedules;
       final data = schedules.map((s) {
         return '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')},'
-            '${(s.duration ~/ 3)}';
+            '${s.duration}';
       }).join(';');
       bluetoothProvider.sendData(data);
     }
