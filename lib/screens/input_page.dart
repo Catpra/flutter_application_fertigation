@@ -119,14 +119,14 @@ class _InputPageState extends State<InputPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    final totalDuration =
-                        _durationArea1 + _durationArea2 + _durationArea3;
                     Provider.of<ScheduleProvider>(context, listen: false)
                         .addSchedule(
                       Schedule(
                         hour: _hour,
                         minute: _minute,
-                        duration: totalDuration,
+                        durationArea1: _durationArea1,
+                        durationArea2: _durationArea2,
+                        durationArea3: _durationArea3,
                       ),
                     );
                     Navigator.pop(context);
