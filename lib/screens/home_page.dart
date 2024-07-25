@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/schedule_provider.dart';
 import '../providers/bluetooth_provider.dart';
 import '../models/schedule.dart';
+import 'dart:async';
 
 class HomePage extends StatelessWidget {
   @override
@@ -10,13 +11,40 @@ class HomePage extends StatelessWidget {
     final scheduleProvider = Provider.of<ScheduleProvider>(context);
     final bluetoothProvider = Provider.of<BluetoothProvider>(context);
 
-    void sendSchedules() {
+    Future<void> sendSchedules() async {
       final schedules = scheduleProvider.schedules;
-      final data = schedules.map((s) {
-        return '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')},'
-            '${s.duration}';
-      }).join(';');
-      bluetoothProvider.sendData(data);
+      const int maxRetries = 3;
+
+      for (var s in schedules) {
+        final data =
+            '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')},'
+            '${s.durationArea1},${s.durationArea2},${s.durationArea3};';
+
+        int retries = 0;
+        bool sent = false;
+        while (!sent && retries < maxRetries) {
+          try {
+            await bluetoothProvider.sendData(data);
+            print('Data sent: $data');
+            sent = true; // Data sent successfully, exit loop
+          } catch (e) {
+            retries++;
+            print('Error sending data, attempt $retries: $e');
+            if (retries < maxRetries) {
+              // Wait before retrying
+              await Future.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        }
+
+        if (!sent) {
+          print('Failed to send data after $maxRetries attempts: $data');
+          // Optionally, handle the failure to send data after all retries
+        }
+
+        // Introduce a delay before the next iteration, regardless of success or failure
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
     }
 
     return Scaffold(
@@ -102,10 +130,9 @@ class HomePage extends StatelessWidget {
                 final schedule = scheduleProvider.schedules[index];
 
                 // Calculate individual area durations
-                final area1Duration = schedule.duration ~/ 3;
-                final area2Duration = schedule.duration ~/ 3;
-                final area3Duration =
-                    schedule.duration - area1Duration - area2Duration;
+                final area1Duration = schedule.durationArea1;
+                final area2Duration = schedule.durationArea2;
+                final area3Duration = schedule.durationArea3;
 
                 return Card(
                   margin: EdgeInsets.all(12.0),
